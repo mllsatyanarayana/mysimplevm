@@ -1,0 +1,32 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: AzureKeyVault@2
+  inputs:
+    azureSubscription: 'DevopsSC'
+    KeyVaultName: 'mykeyvault-satya'
+    SecretsFilter: '- task: AzureResourceManagerTemplateDeployment@3'
+
+  inputs:
+    deploymentScope: 'Resource Group'
+    azureResourceManagerConnection: 'DevopsSC'
+    subscriptionId: '140bb49f-7c2c-4514-927e-1532e34e8eab'
+    action: 'Create Or Update Resource Group'
+    resourceGroupName: 'ABC'
+    location: 'eastus'
+    templateLocation: 'Linked artifact'
+    csmFile: 'azuredeploy.json'
+    csmParametersFile: 'azureDeoployParameter.json'
+    overrideParameters: '-adminPassword $(AdminPassword)'
+    deploymentMode: 'Incremental'
+    deploymentName: 'Tepmplate deploy''
+    RunAsPreJob: false
